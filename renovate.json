@@ -1,0 +1,26 @@
+{
+    "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+    "prHourlyLimit": 10,
+    "extends": [
+      "config:base"
+    ],
+    "regexManagers": [
+      {
+        "fileMatch": [
+          "^.env$"
+        ],
+        "matchStrings": [
+          "datasource=(?<datasource>.*?) depName=(?<depName>.*?)( versioning=(?<versioning>.*?))?\\sENV .*?_VERSION=(?<currentValue>.*)\\s"
+        ],
+        "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
+      }
+    ],
+    "includeForks": true,
+    "schedule": [
+      "at any time"
+    ],
+    "assignees": [
+      "maximilianpohle"
+    ]
+  }
+  
