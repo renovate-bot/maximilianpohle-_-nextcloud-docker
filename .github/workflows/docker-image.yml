@@ -34,11 +34,12 @@ jobs:
           persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal token
           fetch-depth: 0 # otherwise, you will failed to push refs to dest repo
 
-      - name: Dotenv Action
+      - name: Dotenv Action^
+        id: dotenv
         uses: falti/dotenv-action@v1.0.4
         with:
           log-variables: NEXTCLOUD_VERSION
-          
+
       - name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@b67fef219a3c5542bf1d0948862a08152653b4d4
@@ -60,7 +61,7 @@ jobs:
         with:
           push: true
           build-args: |
-            NEXTCLOUD_VERSION=${{ steps.dotenv.outputs.version }}
+            NEXTCLOUD_VERSION=${{ steps.dotenv.outputs.nextcloud_version }}
           cache-from: type=registry,ref=maximilianpohle/docker-alpine-nginx-modsec:${{ env.BRANCH }}
           cache-to: type=inline
           platforms: linux/amd64,linux/arm64
