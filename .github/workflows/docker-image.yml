@@ -42,7 +42,7 @@ jobs:
 
       - name: Extract metadata (tags, labels) for Docker
         id: meta
-        uses: docker/metadata-action@b67fef219a3c5542bf1d0948862a08152653b4d4
+        uses: docker/metadata-action@879dcbb708d40f8b8679d4f7941b938a086e23a7
         with:
           images: |
             maximilianpohle/docker-alpine-nginx-modsec
