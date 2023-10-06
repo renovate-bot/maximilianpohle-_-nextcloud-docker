@@ -48,6 +48,7 @@ jobs:
             maximilianpohle/nextcloud
             ghcr.io/${{ github.repository }}
           tags: |
+            type=raw,value=latest,enable={{is_default_branch}}
             type=ref,event=branch
             type=ref,event=pr
             type=semver,pattern={{version}}
@@ -71,7 +72,7 @@ jobs:
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@fbd16365eb88e12433951383f5e99bd901fc618f
         with:
-          image-ref: maximilianpohle/nextcloud:${{ env.BRANCH }}
+          image-ref: maximilianpohle/nextcloud:${{ github.sha }}
           format: 'template'
           template: '@/contrib/sarif.tpl'
           output: 'trivy-results.sarif'
