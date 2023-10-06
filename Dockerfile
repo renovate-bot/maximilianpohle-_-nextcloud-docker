@@ -59,15 +59,15 @@ RUN mv /tmp/pdlib.so $(php-config --extension-dir)/
 RUN echo "extension=pdlib.so" > /usr/local/etc/php/conf.d/pdlib.ini
 
 # Set ENV varaiable for PHP memory limits (can be adjusted in docker)
-RUN echo 'memory_limit=${MEMORY_LIMIT}' > /usr/local/etc/php/conf.d/memory-limit.ini
-
+RUN echo "memory_limit=${PHP_MEMORY_LIMIT}" > /usr/local/etc/php/conf.d/memory-limit.ini
 RUN echo '*/30 * * * * php -f /var/www/html/occ face:background_job -t 900' >> /var/spool/cron/crontabs/www-data
-
-RUN mkdir -p \
-    /var/log/supervisord \
-    /var/run/supervisord \
-;
-
-COPY supervisord.conf /
 RUN sed -i -e '/^<VirtualHost/,/<\/VirtualHost>/ { /<\/VirtualHost>/ i\Header always set Strict-Transport-Security "max-age=15552000; includeSubDomain"' -e '}' /etc/apache2/sites-enabled/000-default.conf
+
+RUN useradd -ms /bin/bash -u 1000 -s /sbin/nologin nextcloud
+RUN mkdir -p /var/log/supervisord && \
+    mkdir -p /var/run/supervisord && \
+    chown -R  1000 /var/log/supervisord && \
+    chown -R 1000 /var/run/supervisord
+USER nextcloud
+COPY supervisord.conf /
 CMD ["/usr/bin/supervisord", "-c", "/supervisord.conf"]
