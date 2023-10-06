@@ -69,4 +69,5 @@ RUN mkdir -p \
 ;
 
 COPY supervisord.conf /
+RUN sed -i -e '/^<VirtualHost/,/<\/VirtualHost>/ { /<\/VirtualHost>/ i\Header always set Strict-Transport-Security "max-age=15552000; includeSubDomain"' -e '}' /etc/apache2/sites-enabled/000-default.conf
 CMD ["/usr/bin/supervisord", "-c", "/supervisord.conf"]
