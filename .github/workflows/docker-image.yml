@@ -45,7 +45,7 @@ jobs:
         uses: docker/metadata-action@879dcbb708d40f8b8679d4f7941b938a086e23a7
         with:
           images: |
-            maximilianpohle/docker-alpine-nginx-modsec
+            maximilianpohle/nextcloud
             ghcr.io/${{ github.repository }}
           tags: |
             type=ref,event=branch
@@ -71,7 +71,7 @@ jobs:
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@fbd16365eb88e12433951383f5e99bd901fc618f
         with:
-          image-ref: maximilianpohle/docker-alpine-nginx-modsec:${{ env.BRANCH }}
+          image-ref: maximilianpohle/nextcloud:${{ env.BRANCH }}
           format: 'template'
           template: '@/contrib/sarif.tpl'
           output: 'trivy-results.sarif'
