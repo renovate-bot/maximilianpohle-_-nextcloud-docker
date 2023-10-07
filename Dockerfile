@@ -43,9 +43,37 @@ ENV NEXTCLOUD_UPDATE=1
 ENV PHP_MEMORY_LIMIT=1G
 
 RUN set -ex; \
+    \
+    savedAptMark="$(apt-mark showmanual)"; \
+    \
     apt-get update; \
-    apt-get install -y ffmpeg imagemagick ghostscript libopenblas-dev supervisor; \
-    apt-get clean
+    apt-get install -y --no-install-recommends \
+        libbz2-dev \
+        libc-client-dev \
+        libkrb5-dev \
+        libsmbclient-dev \
+        ffmpeg imagemagick ghostscript libopenblas-dev supervisor libopenblas-base \
+    ; \
+    \
+    docker-php-ext-install \
+        bz2 \
+    ; \
+
+# reset apt-mark's "manual" list so that "purge --auto-remove" will remove all build dependencies
+    apt-mark auto '.*' > /dev/null; \
+    apt-mark manual $savedAptMark; \
+    ldd "$(php -r 'echo ini_get("extension_dir");')"/*.so \
+        | awk '/=>/ { print $3 }' \
+        | sort -u \
+        | xargs -r dpkg-query -S \
+        | cut -d: -f1 \
+        | sort -u \
+        | xargs -rt apt-mark manual; \
+    
+    apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
+    rm -rf /var/lib/apt/lists/*; \
+    apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
+;
 
 # Install dlib and PDlib to image
 COPY --from=builder /usr/local/lib/libdlib.so* /usr/local/lib/
@@ -66,7 +94,7 @@ RUN sed -i -e '/^<VirtualHost/,/<\/VirtualHost>/ { /<\/VirtualHost>/ i\Header al
 RUN useradd -ms /bin/bash -u 1000 -s /sbin/nologin nextcloud
 RUN mkdir -p /var/log/supervisord && \
     mkdir -p /var/run/supervisord && \
-    chown -R  1000 /var/log/supervisord && \
+    chown -R 1000 /var/log/supervisord && \
     chown -R 1000 /var/run/supervisord
 USER nextcloud
 COPY supervisord.conf /
