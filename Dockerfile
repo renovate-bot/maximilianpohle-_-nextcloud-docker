@@ -37,43 +37,37 @@ RUN cp $(php-config --extension-dir)/pdlib.so /tmp/pdlib.so
 # RUN php -i | grep "Scan this dir for additional .ini files"
 RUN echo "extension=pdlib.so" > /usr/local/etc/php/conf.d/pdlib.ini
 
-FROM nextcloud:$NEXTCLOUD_VERSION
+FROM nextcloud:27.1.2
 
 ENV NEXTCLOUD_UPDATE=1
 ENV PHP_MEMORY_LIMIT=1G
 
 RUN set -ex; \
-    \
-    savedAptMark="$(apt-mark showmanual)"; \
-    \
     apt-get update; \
     apt-get install -y --no-install-recommends \
         libbz2-dev \
         libc-client-dev \
         libkrb5-dev \
         libsmbclient-dev \
-        ffmpeg imagemagick ghostscript libopenblas-dev supervisor libopenblas-base \
+        ffmpeg imagemagick ghostscript libopenblas-dev supervisor \
     ; \
-    \
-    docker-php-ext-install \
-        bz2 \
-    ; \
+    docker-php-ext-install bz2
 
-# reset apt-mark's "manual" list so that "purge --auto-remove" will remove all build dependencies
-    apt-mark auto '.*' > /dev/null; \
-    apt-mark manual $savedAptMark; \
-    ldd "$(php -r 'echo ini_get("extension_dir");')"/*.so \
-        | awk '/=>/ { print $3 }' \
-        | sort -u \
-        | xargs -r dpkg-query -S \
-        | cut -d: -f1 \
-        | sort -u \
-        | xargs -rt apt-mark manual; \
-    
-    apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
-    rm -rf /var/lib/apt/lists/*; \
-    apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
-;
+## reset apt-mark's "manual" list so that "purge --auto-remove" will remove all build dependencies
+#    apt-mark auto '.*' > /dev/null; \
+#    apt-mark manual $savedAptMark; \
+#    ldd "$(php -r 'echo ini_get("extension_dir");')"/*.so \
+#        | awk '/=>/ { print $3 }' \
+#        | sort -u \
+#        | xargs -r dpkg-query -S \
+#        | cut -d: -f1 \
+#        | sort -u \
+#        | xargs -rt apt-mark manual; \
+#    
+#    apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
+#    rm -rf /var/lib/apt/lists/*; \
+#    apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
+#;
 
 # Install dlib and PDlib to image
 COPY --from=builder /usr/local/lib/libdlib.so* /usr/local/lib/
