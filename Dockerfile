@@ -82,7 +82,7 @@ RUN echo "extension=pdlib.so" > /usr/local/etc/php/conf.d/pdlib.ini
 
 # Set ENV varaiable for PHP memory limits (can be adjusted in docker)
 RUN echo "memory_limit=${PHP_MEMORY_LIMIT}" > /usr/local/etc/php/conf.d/memory-limit.ini
-RUN echo '*/30 * * * * php -f /var/www/html/occ face:background_job -t 900' >> /var/spool/cron/crontabs/www-data
+RUN echo '*/30 * * * * /usr/local/bin/php -f /var/www/html/occ face:background_job -t 900' >> /var/spool/cron/crontabs/www-data
 RUN sed -i -e '/^<VirtualHost/,/<\/VirtualHost>/ { /<\/VirtualHost>/ i\Header always set Strict-Transport-Security "max-age=15552000; includeSubDomain"' -e '}' /etc/apache2/sites-enabled/000-default.conf
 
 RUN useradd -ms /bin/bash -u 1000 -s /sbin/nologin nextcloud
