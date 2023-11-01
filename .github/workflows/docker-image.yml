@@ -23,7 +23,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Log in to the Container registry
-        uses: docker/login-action@b4bedf8053341df3b5a9f9e0f2cf4e79e27360c6
+        uses: docker/login-action@1220aa36aaf257e736f1d64e3b87c4878665836f
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -58,7 +58,7 @@ jobs:
             type=sha
 
       - name: Build and push Docker images
-        uses: docker/build-push-action@4c1b68d83ad20cc1a09620ca477d5bbbb5fa14d0
+        uses: docker/build-push-action@fdf7f43ecf7c1a5c7afe936410233728a8c2d9c2
         with:
           push: true
           build-args: |
