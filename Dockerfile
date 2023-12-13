@@ -37,7 +37,7 @@ RUN cp $(php-config --extension-dir)/pdlib.so /tmp/pdlib.so
 # RUN php -i | grep "Scan this dir for additional .ini files"
 RUN echo "extension=pdlib.so" > /usr/local/etc/php/conf.d/pdlib.ini
 
-FROM nextcloud:27.1.4
+FROM nextcloud:28.0.0
 
 ENV NEXTCLOUD_UPDATE=1
 ENV PHP_MEMORY_LIMIT=1G
