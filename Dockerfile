@@ -51,23 +51,10 @@ RUN set -ex; \
         libsmbclient-dev \
         ffmpeg imagemagick ghostscript libopenblas-dev supervisor \
     ; \
-    docker-php-ext-install bz2
-
-## reset apt-mark's "manual" list so that "purge --auto-remove" will remove all build dependencies
-#    apt-mark auto '.*' > /dev/null; \
-#    apt-mark manual $savedAptMark; \
-#    ldd "$(php -r 'echo ini_get("extension_dir");')"/*.so \
-#        | awk '/=>/ { print $3 }' \
-#        | sort -u \
-#        | xargs -r dpkg-query -S \
-#        | cut -d: -f1 \
-#        | sort -u \
-#        | xargs -rt apt-mark manual; \
-#    
-#    apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
-#    rm -rf /var/lib/apt/lists/*; \
-#    apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
-#;
+    docker-php-ext-install bz2 && \
+    apt-get clean autoclean && \
+    apt-get autoremove --yes && \
+    rm -rf /var/lib/{apt,dpkg,cache,log}/
 
 # Install dlib and PDlib to image
 COPY --from=builder /usr/local/lib/libdlib.so* /usr/local/lib/
@@ -86,11 +73,12 @@ RUN echo '*/5 * * * * php -f /var/www/html/cron.php' >> /var/spool/cron/crontabs
 RUN echo '*/30 * * * * /usr/local/bin/php -f /var/www/html/occ face:background_job -t 900' >> /var/spool/cron/crontabs/nextcloud
 RUN sed -i -e '/^<VirtualHost/,/<\/VirtualHost>/ { /<\/VirtualHost>/ i\Header always set Strict-Transport-Security "max-age=15552000; includeSubDomain"' -e '}' /etc/apache2/sites-enabled/000-default.conf
 
-RUN useradd -ms /bin/bash -u 1000 -s /sbin/nologin nextcloud
-RUN mkdir -p /var/log/supervisord && \
+RUN useradd -ms /bin/bash -u 1000 -s /sbin/nologin nextcloud && \
+    mkdir -p /var/log/supervisord && \
     mkdir -p /var/run/supervisord && \
     chown -R 1000 /var/log/supervisord && \
-    chown -R 1000 /var/run/supervisord
-USER nextcloud
-COPY supervisord.conf /
-CMD ["/usr/bin/supervisord", "-c", "/supervisord.conf"]
+    chown -R 1000 /var/run/supervisord && \
+    chown -R 1000 /var/log/apache2
+#USER nextcloud
+#COPY supervisord.conf /
+#CMD ["/usr/bin/supervisord", "-c", "/supervisord.conf"]
