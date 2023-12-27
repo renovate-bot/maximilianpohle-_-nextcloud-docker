@@ -2,6 +2,9 @@ name: Docker Image CI
 
 on:
   push:
+  workflow_dispatch:
+  schedule:
+    - cron:  '0 4 * * 1,3,5'
 
 jobs:
   build:
