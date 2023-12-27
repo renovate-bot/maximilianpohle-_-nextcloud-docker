@@ -51,7 +51,7 @@ jobs:
             maximilianpohle/nextcloud
           tags: |
             type=raw,value=latest,enable={{is_default_branch}}
-            type=raw,value={{ NEXTCLOUD_VERSION }}
+            type=raw,value=${{ steps.dotenv.outputs.nextcloud_version }}
             type=ref,event=branch
             type=ref,event=pr
             type=semver,pattern={{version}}
