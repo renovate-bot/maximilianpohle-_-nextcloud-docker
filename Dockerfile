@@ -80,5 +80,5 @@ RUN useradd -ms /bin/bash -u 1000 -s /sbin/nologin nextcloud && \
     chown -R 1000 /var/run/supervisord && \
     chown -R 1000 /var/log/apache2
 #USER nextcloud
-#COPY supervisord.conf /
-#CMD ["/usr/bin/supervisord", "-c", "/supervisord.conf"]
+COPY nextcloud_trap.sh /
+CMD ["/nextcloud_trap.sh"]
