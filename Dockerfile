@@ -1,6 +1,5 @@
 ARG NEXTCLOUD_VERSION
-
-FROM nextcloud:apache as builder
+FROM nextcloud:$NEXTCLOUD_VERSION as builder
 
 # Build and install dlib on builder
 RUN apt-get update ; \
@@ -37,7 +36,8 @@ RUN cp $(php-config --extension-dir)/pdlib.so /tmp/pdlib.so
 # RUN php -i | grep "Scan this dir for additional .ini files"
 RUN echo "extension=pdlib.so" > /usr/local/etc/php/conf.d/pdlib.ini
 
-FROM nextcloud:28.0.1
+ARG NEXTCLOUD_VERSION
+FROM nextcloud:$NEXTCLOUD_VERSION
 
 ENV NEXTCLOUD_UPDATE=1
 ENV PHP_MEMORY_LIMIT=1G
