@@ -81,4 +81,4 @@ RUN useradd -ms /bin/bash -u 1000 -s /sbin/nologin nextcloud && \
     chown -R 1000 /var/log/apache2
 #USER nextcloud
 COPY nextcloud_trap.sh /
-ENTRYPOINT ["/nextcloud_trap.sh"]
+#ENTRYPOINT ["/nextcloud_trap.sh"]
