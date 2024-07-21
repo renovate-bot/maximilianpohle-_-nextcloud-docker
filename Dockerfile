@@ -48,7 +48,7 @@ RUN set -ex; \
         libbz2-dev \
         libc-client-dev \
         libkrb5-dev \
-        libsmbclient-dev \
+        smbclient libsmbclient-dev \
         ffmpeg imagemagick ghostscript libopenblas-dev supervisor \
     ; \
     docker-php-ext-install bz2 && \
