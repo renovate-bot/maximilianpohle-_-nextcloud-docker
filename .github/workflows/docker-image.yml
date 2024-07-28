@@ -39,7 +39,7 @@ jobs:
 
       - name: Dotenv Action^
         id: dotenv
-        uses: falti/dotenv-action@v1.0.4
+        uses: falti/dotenv-action@v1.1.4
         with:
           log-variables: NEXTCLOUD_VERSION
 
