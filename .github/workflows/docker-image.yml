@@ -45,7 +45,7 @@ jobs:
 
       - name: Extract metadata (tags, labels) for Docker
         id: meta
-        uses: docker/metadata-action@31cebacef4805868f9ce9a0cb03ee36c32df2ac4
+        uses: docker/metadata-action@b53be03109c4ef6f6cc7aa545b84b17a7fe51c1e
         with:
           images: |
             maximilianpohle/nextcloud
